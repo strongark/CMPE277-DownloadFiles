@@ -18,15 +18,19 @@
 
         <receiver android:name=".MainActivity$ReceiveDownloadMessage">
             <intent-filter>
-                <action android:name="com.cmpe277.downloadmanager.message"/>
+                <action android:name="com.cmpe277.downloadmanager.message" />
             </intent-filter>
         </receiver>
 
         <service android:name=".DownloadService">
             <intent-filter>
-                <action android:name="com.cmpe277.downloadmanager.DownloadService"/>
+                <action android:name="com.cmpe277.downloadmanager.DownloadService" />
             </intent-filter>
         </service>
+        <service
+            android:name=".PreDownloadService"
+            android:enabled="false"
+            android:exported="false"></service>
     </application>
 
 </manifest>

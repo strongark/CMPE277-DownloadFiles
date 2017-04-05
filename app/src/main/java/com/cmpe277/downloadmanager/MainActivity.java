@@ -25,7 +25,7 @@ public class MainActivity extends Activity {
 
     public void onDownload(View view) {
         //Intent intent = new Intent(this,DownloadService.class);
-        Intent intent = new Intent(this,DownloadService.class);
+        Intent intent = new Intent(this,PreDownloadService.class);
         //put url to intent
 
         URL[] urls=null;
@@ -40,7 +40,7 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
         intent.putExtra("URLs",urls);
-        //startService(intent);
+        startService(intent);
     }
 
     public void onCancel(View view) {
