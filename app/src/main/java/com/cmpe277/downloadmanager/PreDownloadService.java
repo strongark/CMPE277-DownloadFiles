@@ -27,13 +27,14 @@ public class PreDownloadService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
+        return null;
     }
 
     //do some long running task here
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Toast.makeText(this,"Service stated",Toast.LENGTH_LONG).show();
+        Log.d(TAG,"service started");
 
         doSomethingRepeatedly();
 
