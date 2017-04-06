@@ -16,24 +16,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".MainActivity$ReceiveDownloadMessage">
-            <intent-filter>
-                <action android:name="com.cmpe277.downloadmanager.message" />
-            </intent-filter>
-        </receiver>
-
-        <service android:name=".DownloadService">
-            <intent-filter>
-                <action android:name="com.cmpe277.downloadmanager.DownloadService" />
-            </intent-filter>
-        </service>
-        <service
-            android:name=".PreDownloadService"
-            android:enabled="false"
-            android:exported="false" />
-        <service
-            android:name=".PreDownloadIntentService"
-            android:exported="false"></service>
+        <service android:name=".DownloadService"/>
     </application>
 
 </manifest>

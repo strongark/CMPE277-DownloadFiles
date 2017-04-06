@@ -35,7 +35,7 @@ public class MainActivity extends Activity {
     public void onDownload(View view) {
         Log.d(TAG, "Download file");
         //Intent intent = new Intent(this,DownloadService.class);
-        Intent intent = new Intent(this,PreDownloadIntentService.class);
+        Intent intent = new Intent(this,DownloadService.class);
         //put url to intent
 
         URL[] urls=null;
@@ -50,8 +50,6 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
         intent.putExtra("URLs",urls);
-        MyResultReceiver receiver = new MyResultReceiver(null);
-        intent.putExtra("receiver",receiver);
         startService(intent);
     }
 
