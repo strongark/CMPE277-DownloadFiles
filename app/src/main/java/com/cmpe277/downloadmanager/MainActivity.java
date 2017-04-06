@@ -2,11 +2,16 @@ package com.cmpe277.downloadmanager;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.ResultReceiver;
+import android.support.annotation.Nullable;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
@@ -22,6 +27,27 @@ public class MainActivity extends Activity {
     static final String DOWNLOAD_INTENT_MSG="com.cmpe277.downloadmanager.message";
     static final String TAG="MyMainActivity";
     Handler handler = new Handler();
+    BoundDownloadService boundDownloadService=null;
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateDownloadProgress(intent.getStringExtra("message"));
+        }
+    };
+
+    ServiceConnection boundServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            boundDownloadService= ((BoundDownloadService.LocalBinder)service).getService();
+            URL[] urls = getUrls();
+            boundDownloadService.DownloadFile(urls);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,14 +56,25 @@ public class MainActivity extends Activity {
         logView.setText("");
         logView.setMovementMethod(new ScrollingMovementMethod());
         Log.d(TAG, "onCreate");
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(DOWNLOAD_INTENT_MSG);
+        registerReceiver(broadcastReceiver,intentFilter);
     }
 
     public void onDownload(View view) {
         Log.d(TAG, "Download file");
         //Intent intent = new Intent(this,DownloadService.class);
-        Intent intent = new Intent(this,DownloadService.class);
+        Intent intent = new Intent(this,BoundDownloadService.class);
         //put url to intent
 
+        URL[] urls = getUrls();
+        intent.putExtra("URLs",urls);
+        //startService(intent);
+        bindService(intent,boundServiceConnection,BIND_AUTO_CREATE);
+    }
+
+    @Nullable
+    private URL[] getUrls() {
         URL[] urls=null;
         try {
             urls=new URL[]{
@@ -49,12 +86,11 @@ public class MainActivity extends Activity {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-        intent.putExtra("URLs",urls);
-        startService(intent);
+        return urls;
     }
 
     public void onCancel(View view) {
-
+        unbindService(boundServiceConnection);
     }
 
     public void updateDownloadProgress(final String logMsg){
@@ -67,35 +103,4 @@ public class MainActivity extends Activity {
         });
     }
 
-//    public static class ReceiveDownloadMessage extends BroadcastReceiver{
-//
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            String message=intent.getExtras().getString("message");
-//            Toast.makeText(context,message,Toast.LENGTH_LONG);
-//        }
-//    }
-    private class MyResultReceiver extends ResultReceiver {
-    /**
-     * Create a new ResultReceive to receive results.  Your
-     * {@link #onReceiveResult} method will be called from the thread running
-     * <var>handler</var> if given, or from an arbitrary thread if null.
-     *
-     * @param handler
-     */
-        public MyResultReceiver(Handler handler) {
-            super(handler);
-        }
-
-    @Override
-    protected void onReceiveResult(int resultCode, Bundle resultData) {
-        Log.i(TAG, "Receive message from service");
-        Log.i(TAG, Thread.currentThread().getName());
-        super.onReceiveResult(resultCode, resultData);
-        if(resultCode==1&&resultData!=null){
-            String msg=resultData.getString("message");
-            updateDownloadProgress(msg);
-        }
-    }
-}
 }
