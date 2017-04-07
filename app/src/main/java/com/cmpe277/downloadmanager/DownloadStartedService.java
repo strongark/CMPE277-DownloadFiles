@@ -13,9 +13,9 @@ import java.net.URL;
  * Created by tranpham on 4/4/17.
  */
 
-public class DownloadService extends Service {
+public class DownloadStartedService extends Service {
     static final String DOWNLOAD_INTENT_MSG="com.cmpe277.downloadmanager.message";
-    static final String TAG="DownloadService";
+    static final String TAG="DownloadStartedService";
     DownloadTask downloadTask=null;
     @Nullable
     @Override

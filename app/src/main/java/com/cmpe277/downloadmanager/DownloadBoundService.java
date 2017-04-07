@@ -14,13 +14,30 @@ import java.net.URL;
  * Created by tranpham on 4/6/17.
  */
 
-public class BoundDownloadService extends Service {
-    static final String TAG = "My"+BoundDownloadService.class.getSimpleName();
+public class DownloadBoundService extends Service {
+    static final String TAG = "My"+DownloadBoundService.class.getSimpleName();
     static final String DOWNLOAD_INTENT_MSG="com.cmpe277.downloadmanager.message";
+    DownloadTask externalDownloadTask = new DownloadTask(new DownloadTask.AsyncResponse() {
+        @Override
+        public void progressUpdate(String msg) {
+            broadcastDownloadUpdate(msg);
+        }
+
+        @Override
+        public void postExecute(String msg) {
+            broadcastDownloadUpdate(msg);
+        }
+
+        @Override
+        public void cancel() {
+
+        }
+    });
+
     IBinder binder = new LocalBinder();
     class LocalBinder extends Binder {
-        public BoundDownloadService getService(){
-            return BoundDownloadService.this;
+        public DownloadBoundService getService(){
+            return DownloadBoundService.this;
         }
     }
     @Nullable
@@ -49,7 +66,8 @@ public class BoundDownloadService extends Service {
     }
 
     public void DownloadFile(URL...urls){
-        new downloadTask().execute(urls);
+        //new downloadTask().execute(urls);
+        externalDownloadTask.execute(urls);
     }
 
     private void DownloadFile(URL url){

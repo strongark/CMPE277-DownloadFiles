@@ -16,8 +16,9 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".DownloadService"/>
-        <service android:name=".BoundDownloadService"/>
+        <service android:name=".DownloadStartedService"/>
+        <service android:name=".DownloadBoundService"/>
+        <service android:name=".DownloadIntentService"/>
     </application>
 
 </manifest>

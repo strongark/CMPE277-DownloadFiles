@@ -10,14 +10,12 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.ResultReceiver;
 import android.support.annotation.Nullable;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -27,7 +25,7 @@ public class MainActivity extends Activity {
     static final String DOWNLOAD_INTENT_MSG="com.cmpe277.downloadmanager.message";
     static final String TAG="MyMainActivity";
     Handler handler = new Handler();
-    BoundDownloadService boundDownloadService=null;
+    DownloadBoundService downloadBoundService =null;
     BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -38,9 +36,9 @@ public class MainActivity extends Activity {
     ServiceConnection boundServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            boundDownloadService= ((BoundDownloadService.LocalBinder)service).getService();
+            downloadBoundService = ((DownloadBoundService.LocalBinder)service).getService();
             URL[] urls = getUrls();
-            boundDownloadService.DownloadFile(urls);
+            downloadBoundService.DownloadFile(urls);
         }
 
         @Override
@@ -63,8 +61,8 @@ public class MainActivity extends Activity {
 
     public void onDownload(View view) {
         Log.d(TAG, "Download file");
-        //Intent intent = new Intent(this,DownloadService.class);
-        Intent intent = new Intent(this,BoundDownloadService.class);
+        //Intent intent = new Intent(this,DownloadStartedService.class);
+        Intent intent = new Intent(this,DownloadBoundService.class);
         //put url to intent
 
         URL[] urls = getUrls();
