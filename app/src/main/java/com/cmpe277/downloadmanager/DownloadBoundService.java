@@ -25,11 +25,13 @@ public class DownloadBoundService extends Service {
     static final String DOWNLOAD_INTENT_MSG="com.cmpe277.downloadmanager.message";
     Queue<URL> downloadQueue=new LinkedList<URL>();
     boolean isDownloading=false;
+    boolean isCancelled=false;
     DownloadTask externalDownloadTask = null;
+
 
     private void processDownloadQueue() {
         Log.i(TAG, "processDownloadQueue: ");
-        if(!isDownloading){
+        if(!isDownloading&&!isCancelled){
             URL url=downloadQueue.poll();
             if(url!=null)
             {
@@ -133,11 +135,22 @@ public class DownloadBoundService extends Service {
         for (URL url:urls)
             downloadQueue.add(url);
 
+        isCancelled=false;//make sure to reset this variable
         processDownloadQueue();
     }
 
+    /*
+    * Stop downloading. If a file is downloading, here is what happen
+    * - Stop processing the current file? (not possible)
+    * - Stop processing the rest of the queue: YEAH
+    * */
     public void cancelDownload(){
+        isCancelled=true;
+    }
 
+    public void resumeDownload(){
+        isCancelled=false;
+        processDownloadQueue();
     }
 
     public void broadcastDownloadProgress(String message){

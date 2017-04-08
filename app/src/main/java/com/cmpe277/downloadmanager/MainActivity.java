@@ -110,7 +110,7 @@ public class MainActivity extends Activity {
     }
 
     public void onCancel(View view) {
-
+        downloadBoundService.cancelDownload();
     }
 
     public void updateDownloadProgress(final String logMsg){
