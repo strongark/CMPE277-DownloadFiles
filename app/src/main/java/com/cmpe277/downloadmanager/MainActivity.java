@@ -10,12 +10,14 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.ResultReceiver;
 import android.support.annotation.Nullable;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -78,19 +80,23 @@ public class MainActivity extends Activity {
     protected void onStart() {
         super.onStart();
         Intent intent = new Intent(this,DownloadBoundService.class);
-        bindService(intent,boundServiceConnection,BIND_AUTO_CREATE);
+//        bindService(intent,boundServiceConnection,BIND_AUTO_CREATE);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        unbindService(boundServiceConnection);
+//        unbindService(boundServiceConnection);
     }
 
     public void onDownload(View view) {
         Log.d(TAG, "Download file");
         URL[] urls = getUrls();
-        downloadBoundService.downloadFile(urls);
+//        downloadBoundService.downloadFile(urls);
+        Intent intent = new Intent(this,DownloadStartedService.class);
+        intent.putExtra("urls",urls);
+        startService(intent);
+
     }
 
     @Nullable
@@ -105,12 +111,16 @@ public class MainActivity extends Activity {
             };
         } catch (MalformedURLException e) {
             e.printStackTrace();
+            Toast.makeText(this,"URL is not valid",Toast.LENGTH_LONG).show();
         }
         return urls;
     }
 
     public void onCancel(View view) {
-        downloadBoundService.cancelDownload();
+//        downloadBoundService.cancelDownload();
+        Intent intent = new Intent(this,DownloadStartedService.class);
+        stopService(intent);
+
     }
 
     public void updateDownloadProgress(final String logMsg){
@@ -122,5 +132,4 @@ public class MainActivity extends Activity {
             }
         },100);
     }
-
 }

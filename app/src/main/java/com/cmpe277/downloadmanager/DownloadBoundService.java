@@ -167,5 +167,4 @@ public class DownloadBoundService extends Service {
         downloadProgressUpdate.putExtra("percentComplete",percentComplete);
         sendBroadcast(downloadProgressUpdate);
     }
-
 }
