@@ -96,7 +96,6 @@ public class DownloadTask extends AsyncTask<URL,Integer,DownloadTask.Result> {
                 cancel(true);
             }
             Log.i(TAG, "onPreExecute: get file path");
-            mCallback.updateFromDownload("Broadcast start downloading");
         }
     }
 
@@ -119,6 +118,7 @@ public class DownloadTask extends AsyncTask<URL,Integer,DownloadTask.Result> {
             try {
                 //download
                 httpDownloadFile(urls[0]);
+                result=new Result("SUCCESS");
             }
             catch (Exception ex){
                 Log.d(TAG, "Error download file:"+ex.toString());
@@ -148,7 +148,7 @@ public class DownloadTask extends AsyncTask<URL,Integer,DownloadTask.Result> {
         if(values.length>1)
             mCallback.onProgressUpdate(values[0],values[1]);
         else
-            mCallback.updateFromDownload("Download status code: "+values[0]);
+            mCallback.onProgressUpdate(values[0],0);
     }
 
     /**

@@ -187,6 +187,7 @@
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/activity_vertical_margin"
             android:text="File Downloaded! (2016-annual-report-full.pdf)\nFile Downloaded! (IoE_Economy.pdf)\nFile Downloaded! (everything-for-cities.pdf)\nFile Downloaded! (Cisco_2014_ASR.pdf)"
-            android:textColor="#000000"/>
+            android:textColor="#000000"
+            android:gravity="bottom"/>
     </LinearLayout>
 </LinearLayout>

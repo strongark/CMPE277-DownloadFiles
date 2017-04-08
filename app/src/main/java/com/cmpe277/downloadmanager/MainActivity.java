@@ -51,10 +51,7 @@ public class MainActivity extends Activity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             downloadBoundService = ((DownloadBoundService.LocalBinder)service).getService();
-            URL[] urls = getUrls();
-            downloadBoundService.DownloadFile(urls);
             Log.i(TAG, "onServiceConnected: Start downloading");
-
         }
 
         @Override
@@ -77,17 +74,23 @@ public class MainActivity extends Activity {
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Intent intent = new Intent(this,DownloadBoundService.class);
+        bindService(intent,boundServiceConnection,BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unbindService(boundServiceConnection);
+    }
+
     public void onDownload(View view) {
         Log.d(TAG, "Download file");
-        //Intent intent = new Intent(this,DownloadStartedService.class);
-        Intent intent = new Intent(this,DownloadBoundService.class);
-        //put url to intent
-
         URL[] urls = getUrls();
-        intent.putExtra("URLs",urls);
-        //startService(intent);
-        updateDownloadProgress("Downloading.."+urls[0].getFile().toString());
-        bindService(intent,boundServiceConnection,BIND_AUTO_CREATE);
+        downloadBoundService.downloadFile(urls);
     }
 
     @Nullable
@@ -107,7 +110,7 @@ public class MainActivity extends Activity {
     }
 
     public void onCancel(View view) {
-        unbindService(boundServiceConnection);
+
     }
 
     public void updateDownloadProgress(final String logMsg){
