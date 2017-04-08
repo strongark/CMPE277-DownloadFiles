@@ -46,7 +46,7 @@ public class DownloadBoundService extends Service {
                 case Progress.GET_INPUT_STREAM_SUCCESS:
                     break;
                 case Progress.PROCESS_OUTPUT_STREAM_IN_PROGRESS:
-                    broadcastDownloadProgress(percentComplete+"%");
+                    broadcastDownloadProgress("update percentage",percentComplete);
                     break;
                 case Progress.PROCESS_INPUT_STREAM_SUCCESS:
                     break;

@@ -29,13 +29,21 @@ public class MainActivity extends Activity {
     BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            String outputText="";
             int code=intent.getIntExtra("code",-1);
             if(code == DownloadTask.DownloadCallback.Progress.PROCESS_OUTPUT_STREAM_IN_PROGRESS){
                 int percent=intent.getIntExtra("percentComplete",-1);
-                updateDownloadProgress(String.format("%d%..",percent));
+                outputText=percent+"%";
+                if(percent<100){
+                    outputText+="..";
+                }
+                else
+                    outputText+="\n";
             }
             else
-                updateDownloadProgress(intent.getStringExtra("message")+"\n");
+                outputText=intent.getStringExtra("message")+"\n";
+
+            updateDownloadProgress(outputText);
         }
     };
 
@@ -44,8 +52,9 @@ public class MainActivity extends Activity {
         public void onServiceConnected(ComponentName name, IBinder service) {
             downloadBoundService = ((DownloadBoundService.LocalBinder)service).getService();
             URL[] urls = getUrls();
+            downloadBoundService.DownloadFile(urls);
             Log.i(TAG, "onServiceConnected: Start downloading");
-           downloadBoundService.DownloadFile(urls);
+
         }
 
         @Override

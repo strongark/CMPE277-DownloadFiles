@@ -226,10 +226,9 @@ public class DownloadTask extends AsyncTask<URL,Integer,DownloadTask.Result> {
                             report_threshold+=0.1;
                         }
                     }
-                    publishProgress(DownloadCallback.Progress.DOWNLOAD_SUCCESS);
-
                 }
             }
+            publishProgress(DownloadCallback.Progress.DOWNLOAD_SUCCESS);
 
         }finally {
             Log.i(TAG, "httpDownloadFile: release resrource");
