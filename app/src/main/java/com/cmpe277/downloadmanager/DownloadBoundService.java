@@ -2,12 +2,15 @@ package com.cmpe277.downloadmanager;
 
 import android.app.Service;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.io.File;
 import java.net.URL;
 
 /**
@@ -17,20 +20,42 @@ import java.net.URL;
 public class DownloadBoundService extends Service {
     static final String TAG = "My"+DownloadBoundService.class.getSimpleName();
     static final String DOWNLOAD_INTENT_MSG="com.cmpe277.downloadmanager.message";
-    DownloadTask externalDownloadTask = new DownloadTask(new DownloadTask.AsyncResponse() {
+    DownloadTask externalDownloadTask = new DownloadTask(new DownloadTask.DownloadCallback() {
+
         @Override
-        public void progressUpdate(String msg) {
-            broadcastDownloadUpdate(msg);
+        public void updateFromDownload(String result) {
+            broadcastDownloadProgress(result);
         }
 
         @Override
-        public void postExecute(String msg) {
-            broadcastDownloadUpdate(msg);
+        public NetworkInfo getActiveNetworkInfo() {
+            ConnectivityManager connectivityManager=
+                    (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+            return connectivityManager.getActiveNetworkInfo();
         }
 
         @Override
-        public void cancel() {
+        public void onProgressUpdate(int progressCode, int percentComplete) {
 
+            switch(progressCode) {
+                // You can add UI behavior for progress updates here.
+                case Progress.ERROR:
+                    break;
+                case Progress.CONNECT_SUCCESS:
+                    break;
+                case Progress.GET_INPUT_STREAM_SUCCESS:
+                    break;
+                case Progress.PROCESS_OUTPUT_STREAM_IN_PROGRESS:
+                    broadcastDownloadProgress(percentComplete+"%");
+                    break;
+                case Progress.PROCESS_INPUT_STREAM_SUCCESS:
+                    break;
+            }
+        }
+
+        @Override
+        public void finishDownloading() {
+            broadcastDownloadProgress("Finish Download!");
         }
     });
 
@@ -66,46 +91,24 @@ public class DownloadBoundService extends Service {
     }
 
     public void DownloadFile(URL...urls){
-        //new downloadTask().execute(urls);
+        //Async download task
+        //TODO handle download multiple urls
         externalDownloadTask.execute(urls);
     }
 
-    private void DownloadFile(URL url){
-        Log.d(TAG, "DownloadFile: "+url.toString());
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public void broadcastDownloadProgress(String message){
+        Intent downloadProgressUpdate=new Intent(DOWNLOAD_INTENT_MSG);
+        downloadProgressUpdate.putExtra("message",message);
+        sendBroadcast(downloadProgressUpdate);
     }
 
-    private void broadcastDownloadUpdate(String msg){
-        Intent intent = new Intent(DOWNLOAD_INTENT_MSG);
-        intent.putExtra("message",msg);
-        sendBroadcast(intent);
+    public void broadcastDownloadProgress(String message, int percentComplete){
+        Intent downloadProgressUpdate=new Intent(DOWNLOAD_INTENT_MSG);
+        downloadProgressUpdate.putExtra("message",message);
+        downloadProgressUpdate.putExtra("code"
+                , DownloadTask.DownloadCallback.Progress.PROCESS_OUTPUT_STREAM_IN_PROGRESS);
+        downloadProgressUpdate.putExtra("percentComplete",percentComplete);
+        sendBroadcast(downloadProgressUpdate);
     }
-    private class downloadTask extends AsyncTask<URL,String,Integer>{
 
-        @Override
-        protected Integer doInBackground(URL... params) {
-            for (URL url:params) {
-                DownloadFile(params[0]);
-                publishProgress("Finish download: "+url.getFile());
-            }
-
-            return 1;
-        }
-
-        @Override
-        protected void onProgressUpdate(String... values) {
-            super.onProgressUpdate(values);
-            broadcastDownloadUpdate(values[0]);
-        }
-
-        @Override
-        protected void onPostExecute(Integer integer) {
-            super.onPostExecute(integer);
-            broadcastDownloadUpdate("Download complete");
-        }
-    }
 }

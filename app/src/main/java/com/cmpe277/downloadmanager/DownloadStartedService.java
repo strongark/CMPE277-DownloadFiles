@@ -2,11 +2,12 @@ package com.cmpe277.downloadmanager;
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.net.NetworkInfo;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.io.File;
 import java.net.URL;
 
 /**
@@ -27,21 +28,25 @@ public class DownloadStartedService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.d(TAG,"service created");
-        downloadTask = new DownloadTask(new DownloadTask.AsyncResponse() {
+        downloadTask = new DownloadTask(new DownloadTask.DownloadCallback() {
             @Override
-            public void progressUpdate(String msg) {
-                broadcastDownloadProgress(msg);
+            public void updateFromDownload(String result) {
+
             }
 
             @Override
-            public void postExecute(String msg) {
-                broadcastDownloadProgress(msg);
-                stopSelf();
+            public NetworkInfo getActiveNetworkInfo() {
+                return null;
             }
 
             @Override
-            public void cancel() {
-                broadcastDownloadProgress("Cancelled!");
+            public void onProgressUpdate(int progressCode, int percentComplete) {
+
+            }
+
+            @Override
+            public void finishDownloading() {
+
             }
         });
     }

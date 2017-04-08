@@ -29,7 +29,13 @@ public class MainActivity extends Activity {
     BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            updateDownloadProgress(intent.getStringExtra("message"));
+            int code=intent.getIntExtra("code",-1);
+            if(code == DownloadTask.DownloadCallback.Progress.PROCESS_OUTPUT_STREAM_IN_PROGRESS){
+                int percent=intent.getIntExtra("percentComplete",-1);
+                updateDownloadProgress(String.format("%d%..",percent));
+            }
+            else
+                updateDownloadProgress(intent.getStringExtra("message")+"\n");
         }
     };
 
@@ -38,7 +44,8 @@ public class MainActivity extends Activity {
         public void onServiceConnected(ComponentName name, IBinder service) {
             downloadBoundService = ((DownloadBoundService.LocalBinder)service).getService();
             URL[] urls = getUrls();
-            downloadBoundService.DownloadFile(urls);
+            Log.i(TAG, "onServiceConnected: Start downloading");
+           downloadBoundService.DownloadFile(urls);
         }
 
         @Override
@@ -53,10 +60,12 @@ public class MainActivity extends Activity {
         TextView logView= ((TextView)findViewById(R.id.txt_log));
         logView.setText("");
         logView.setMovementMethod(new ScrollingMovementMethod());
-        Log.d(TAG, "onCreate");
+        Log.d(TAG, "onCreate: "+ "register receiver");
+
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(DOWNLOAD_INTENT_MSG);
         registerReceiver(broadcastReceiver,intentFilter);
+
     }
 
     public void onDownload(View view) {
@@ -68,6 +77,7 @@ public class MainActivity extends Activity {
         URL[] urls = getUrls();
         intent.putExtra("URLs",urls);
         //startService(intent);
+        updateDownloadProgress("Downloading.."+urls[0].getFile().toString());
         bindService(intent,boundServiceConnection,BIND_AUTO_CREATE);
     }
 
@@ -93,12 +103,12 @@ public class MainActivity extends Activity {
 
     public void updateDownloadProgress(final String logMsg){
 
-        handler.post(new Runnable() {
+        handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                ((TextView)findViewById(R.id.txt_log)).append(logMsg+"\n");
+                ((TextView)findViewById(R.id.txt_log)).append(logMsg);
             }
-        });
+        },100);
     }
 
 }
