@@ -109,38 +109,6 @@
             />
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="4dp"
-        android:background="#7A1EA1">
-
-        <TextView
-            android:id="@+id/txt_review"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="3"
-            android:textColor="#FFFFFF"
-            android:text="File 4 URL"
-            android:textAlignment="viewEnd"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:gravity="center"
-            />
-
-        <EditText
-            android:id="@+id/edt_url4"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textColor="#000000"
-            android:background="#FFFFFF"
-            android:padding="4dp"
-            android:gravity="center"
-            android:textAlignment="viewStart"
-            android:text="http://www.cisco.com/web/offer/gist_ty2_asset/Cisco_2014_ASR.pdf"
-            />
-    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -151,7 +119,7 @@
             android:id="@+id/btn_generate"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="Download"
+            android:text="Download (Started)"
             android:layout_weight="1"
             android:onClick="onDownload"
             />
@@ -186,7 +154,7 @@
             android:scrollbars="vertical"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/activity_vertical_margin"
-            android:text="File Downloaded! (2016-annual-report-full.pdf)\nFile Downloaded! (IoE_Economy.pdf)\nFile Downloaded! (everything-for-cities.pdf)\nFile Downloaded! (Cisco_2014_ASR.pdf)"
+            android:text=""
             android:textColor="#000000"
             android:gravity="bottom"/>
     </LinearLayout>

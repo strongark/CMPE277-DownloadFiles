@@ -7,7 +7,6 @@ import android.net.NetworkInfo;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
-
 import java.io.File;
 import java.net.URL;
 import java.util.LinkedList;
@@ -94,6 +93,10 @@ public class DownloadStartedService extends Service {
                     }
                 });
                 externalDownloadTask.execute(url);
+            }
+            else //there's nothing to do, stop service
+            {
+                stopSelf();
             }
         }
         else{

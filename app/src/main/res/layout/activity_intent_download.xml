@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:id="@+id/activity_intent_download"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:orientation="vertical"
+android:paddingBottom="@dimen/activity_vertical_margin"
+android:paddingLeft="@dimen/activity_horizontal_margin"
+android:paddingRight="@dimen/activity_horizontal_margin"
+android:paddingTop="@dimen/activity_vertical_margin"
+android:background="#4CAF50"
+tools:context="com.cmpe277.downloadmanager.IntentDownloadActivity">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="4dp"
+    android:background="#7A1EA1">
+
+    <TextView
+        android:id="@+id/txt_activities"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:textColor="#FFFFFF"
+        android:text="File 1 URL"
+        android:textAlignment="viewEnd"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:gravity="center"
+        />
+
+    <EditText
+        android:id="@+id/edt_url1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:textColor="#000000"
+        android:background="#FFFFFF"
+        android:padding="4dp"
+        android:gravity="center"
+        android:textAlignment="viewStart"
+        android:text="http://www.cisco.com/c/dam/en_us/about/annual-report/2016-annual-report-full.pdf"
+        />
+</LinearLayout>
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="4dp"
+    android:background="#7A1EA1">
+
+    <TextView
+        android:id="@+id/txt_desc"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:textColor="#FFFFFF"
+        android:text="File 2 URL"
+        android:gravity="center"
+        android:textAlignment="viewEnd"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        />
+
+    <EditText
+        android:id="@+id/edt_url2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:textColor="#000000"
+        android:background="#FFFFFF"
+        android:padding="4dp"
+        android:gravity="center"
+        android:textAlignment="viewStart"
+        android:text="http://www.cisco.com/web/about/ac79/docs/innov/IoE_Economy.pdf"
+        />
+</LinearLayout>
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="4dp"
+    android:background="#7A1EA1">
+
+    <TextView
+        android:id="@+id/txt_price"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:textColor="#FFFFFF"
+        android:text="File 3 URL"
+        android:textAlignment="viewEnd"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+
+        android:gravity="center"
+        />
+
+    <EditText
+        android:id="@+id/edt_url3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:textColor="#000000"
+        android:background="#FFFFFF"
+        android:padding="4dp"
+        android:gravity="center"
+        android:textAlignment="viewStart"
+        android:text="http://www.cisco.com/web/strategy/docs/gov/everything-for-cities.pdf"
+        />
+</LinearLayout>
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="4dp"
+    android:background="#7A1EA1">
+
+    <TextView
+        android:id="@+id/txt_review"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:textColor="#FFFFFF"
+        android:text="File 4 URL"
+        android:textAlignment="viewEnd"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:gravity="center"
+        />
+
+    <EditText
+        android:id="@+id/edt_url4"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:textColor="#000000"
+        android:background="#FFFFFF"
+        android:padding="4dp"
+        android:gravity="center"
+        android:textAlignment="viewStart"
+        android:text="http://www.cisco.com/web/offer/gist_ty2_asset/Cisco_2014_ASR.pdf"
+        />
+</LinearLayout>
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="0"
+    android:background="#691A99">
+    <Button
+        android:id="@+id/btn_generate"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="Download (intent)"
+        android:layout_weight="1"
+        android:onClick="onDownload"
+        />
+    <Button
+        android:id="@+id/btn_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="Cancel"
+        android:layout_weight="1"
+        android:onClick="onCancel"/>
+</LinearLayout>
+
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Output"
+    android:textColor="#9B26AF"
+    android:background="#FFFF"
+    android:textStyle="bold"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"/>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="4">
+
+    <TextView
+        android:id="@+id/txt_log"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFFFFF"
+        android:scrollbars="vertical"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:text="File Downloaded! (2016-annual-report-full.pdf)\nFile Downloaded! (IoE_Economy.pdf)\nFile Downloaded! (everything-for-cities.pdf)\nFile Downloaded! (Cisco_2014_ASR.pdf)"
+        android:textColor="#000000"
+        android:gravity="bottom"/>
+</LinearLayout>
+</LinearLayout>

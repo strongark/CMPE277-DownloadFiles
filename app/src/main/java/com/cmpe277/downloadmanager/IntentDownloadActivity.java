@@ -25,81 +25,20 @@ import android.widget.Toast;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.zip.Inflater;
 
-public class MainActivity extends AppCompatActivity {
-
+public class IntentDownloadActivity extends AppCompatActivity {
     static final String DOWNLOAD_INTENT_MSG="com.cmpe277.downloadmanager.message";
-    static final String TAG="MyMainActivity";
+    static final String TAG="MyDownloadActivity";
     Handler handler = new Handler();
-    DownloadBoundService downloadBoundService =null;
-    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String outputText="";
-            int code=intent.getIntExtra("code",-1);
-            if(code == DownloadTask.DownloadCallback.Progress.PROCESS_OUTPUT_STREAM_IN_PROGRESS){
-                int percent=intent.getIntExtra("percentComplete",-1);
-                outputText=percent+"%";
-                if(percent<100){
-                    outputText+="..";
-                }
-                else
-                    outputText+="\n";
-            }
-            else
-                outputText=intent.getStringExtra("message")+"\n";
-
-            updateDownloadProgress(outputText);
-        }
-    };
-
-    ServiceConnection boundServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            downloadBoundService = ((DownloadBoundService.LocalBinder)service).getService();
-            Log.i(TAG, "onServiceConnected: Start downloading");
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-
-        }
-    };
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.mn_bound:
-                startActivity(new Intent(this,BoundDownloadActivity.class));
-                break;
-            case R.id.mn_intent:
-                startActivity(new Intent(this,IntentDownloadActivity.class));
-                break;
-            default:
-                return super.onOptionsItemSelected(item);
-        };
-        return true;
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu,menu);
-        return true;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_intent_download);
         TextView logView= ((TextView)findViewById(R.id.txt_log));
         logView.setText("");
         logView.setMovementMethod(new ScrollingMovementMethod());
         Log.d(TAG, "onCreate: "+ "register receiver");
-
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(DOWNLOAD_INTENT_MSG);
-        registerReceiver(broadcastReceiver,intentFilter);
 
     }
 
@@ -113,16 +52,43 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        unregisterReceiver(broadcastReceiver);
     }
 
     public void onDownload(View view) {
         Log.d(TAG, "Download file");
         URL[] urls = getUrls();
-//        downloadBoundService.downloadFile(urls);
-        Intent intent = new Intent(this,DownloadStartedService.class);
-        intent.putExtra("urls",urls);
-        startService(intent);
+
+        /*
+        * we just loop and start the service continuously.
+        * Intent service already have working queue to process intent consecutively
+        * */
+        for (URL url:urls){
+            Intent intent = new Intent(this,DownloadIntentService.class);
+            intent.putExtra("url",url);
+            startService(intent);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.intent_menu,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.mn_bound:
+                startActivity(new Intent(this,BoundDownloadActivity.class));
+                break;
+            case R.id.mn_started:
+                startActivity(new Intent(this,MainActivity.class));
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        return true;
     }
 
     @Nullable
@@ -130,9 +96,9 @@ public class MainActivity extends AppCompatActivity {
         URL[] urls=null;
         try {
             urls=new URL[]{
-                new URL(((EditText)findViewById(R.id.edt_url1)).getText().toString()),
-                new URL(((EditText)findViewById(R.id.edt_url2)).getText().toString()),
-                new URL(((EditText)findViewById(R.id.edt_url3)).getText().toString())
+                    new URL(((EditText)findViewById(R.id.edt_url1)).getText().toString()),
+                    new URL(((EditText)findViewById(R.id.edt_url2)).getText().toString()),
+                    new URL(((EditText)findViewById(R.id.edt_url3)).getText().toString())
             };
         } catch (MalformedURLException e) {
             e.printStackTrace();

@@ -1,18 +1,17 @@
 package com.cmpe277.downloadmanager;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.ResultReceiver;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Menu;
@@ -26,7 +25,7 @@ import android.widget.Toast;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class MainActivity extends AppCompatActivity {
+public class BoundDownloadActivity extends AppCompatActivity {
 
     static final String DOWNLOAD_INTENT_MSG="com.cmpe277.downloadmanager.message";
     static final String TAG="MyMainActivity";
@@ -69,8 +68,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            case R.id.mn_bound:
-                startActivity(new Intent(this,BoundDownloadActivity.class));
+            case R.id.mn_started:
+                startActivity(new Intent(this,MainActivity.class));
                 break;
             case R.id.mn_intent:
                 startActivity(new Intent(this,IntentDownloadActivity.class));
@@ -84,14 +83,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu,menu);
+        inflater.inflate(R.menu.bound_menu,menu);
         return true;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_bound_download);
         TextView logView= ((TextView)findViewById(R.id.txt_log));
         logView.setText("");
         logView.setMovementMethod(new ScrollingMovementMethod());
@@ -107,22 +106,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Intent intent = new Intent(this,DownloadBoundService.class);
-//        bindService(intent,boundServiceConnection,BIND_AUTO_CREATE);
+        bindService(intent,boundServiceConnection,BIND_AUTO_CREATE);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        unbindService(boundServiceConnection);
         unregisterReceiver(broadcastReceiver);
     }
 
     public void onDownload(View view) {
         Log.d(TAG, "Download file");
         URL[] urls = getUrls();
-//        downloadBoundService.downloadFile(urls);
-        Intent intent = new Intent(this,DownloadStartedService.class);
-        intent.putExtra("urls",urls);
-        startService(intent);
+        downloadBoundService.downloadFile(urls);
     }
 
     @Nullable
@@ -130,9 +127,9 @@ public class MainActivity extends AppCompatActivity {
         URL[] urls=null;
         try {
             urls=new URL[]{
-                new URL(((EditText)findViewById(R.id.edt_url1)).getText().toString()),
-                new URL(((EditText)findViewById(R.id.edt_url2)).getText().toString()),
-                new URL(((EditText)findViewById(R.id.edt_url3)).getText().toString())
+                    new URL(((EditText)findViewById(R.id.edt_url1)).getText().toString()),
+                    new URL(((EditText)findViewById(R.id.edt_url2)).getText().toString()),
+                    new URL(((EditText)findViewById(R.id.edt_url3)).getText().toString())
             };
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -142,10 +139,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onCancel(View view) {
-//        downloadBoundService.cancelDownload();
+        downloadBoundService.cancelDownload();
         Intent intent = new Intent(this,DownloadStartedService.class);
-        stopService(intent);
-
     }
 
     public void updateDownloadProgress(final String logMsg){
@@ -184,5 +179,4 @@ public class MainActivity extends AppCompatActivity {
 
             updateDownloadProgress(outputText);
         }
-    }
-}
+    }}
